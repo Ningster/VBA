@@ -1,4 +1,5 @@
 VERSION 1.0 CLASS
+'NING VBA'
 BEGIN
   MultiUse = -1  'True
 END
