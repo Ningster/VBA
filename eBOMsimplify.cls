@@ -1,5 +1,4 @@
 VERSION 1.0 CLASS
-'NING VBA'
 BEGIN
   MultiUse = -1  'True
 END
@@ -16,6 +15,20 @@ For Each ws In ActiveWorkbook.Worksheets
 Next ws
 'remove all rules in the worksheet'
 
+For n = 2 To Range("A1").End(xlDown).Row
+  If Range("B" & n).Value = "Paint/Process" Or Range("B" & n).Font.Strikethrough = True Then
+     Rows(n).Delete
+     n = n - 1
+  End If
+Next n
+'remove "Paint/Process" & "strikethrough" DPN'
+
+Range("E:K").Replace ".*", "", xlPart
+'remove string after "." '
+
+Range("E:K").NumberFormat = "@"
+'make sure the format is Text'
+
 Dim xR As Range, TT
 For Each xR In [E:K].SpecialCells(2)
    TT = Application.Trim(xR)
@@ -23,16 +36,7 @@ For Each xR In [E:K].SpecialCells(2)
  Next
 'remove all blank after P/N'
 
-For n = 2 To Range("A1").End(xlDown).Row
-  If Range("B" & n).Value = "Paint/Process" Or Range("B" & n).Font.Strikethrough = True Then
-     Rows(n).Delete
-     n = n - 1
-  End If
-Next n
-'remove "Paint/Process" DPN first'
-
-Range("E:K").Replace ".*", "", xlPart
-'remove string after "." '
+Columns("E:K").EntireColumn.AutoFit
 
 End Sub
 
@@ -133,7 +137,9 @@ Next ws
 'Check if there's duplicate worksheets.'
 
 If B = False Then
-MsgBox ("The orphan sheet already existed. Please delete the existed one and click the buttom again.")   'Error message if there's an existed one'
+MsgBox ("The orphan sheet already existed.")   'Error message if there's an existed one'
+ElseIf Len(sheetName) > 24 Then
+MsgBox ("Sheet name is too long")   'Error message if sheet name is too long'
 Else
 bk.Sheets.Add.Name = sheetName + "-Orphan"
 
@@ -163,6 +169,9 @@ bk.Sheets(sheetName + "-Orphan").Range("C1").Value = "Agile Description"
 
 Columns("A:C").EntireColumn.AutoFit
 
+Range("A:C").NumberFormat = "@"
+'make sure the format is Text'
+
 bk.Sheets(sheetName + "-Orphan").Range("G2").Formula = "=BOMChain(A2:A100)"
 End If
 'Create an orphan sheet if there's no duplicate one'
@@ -190,6 +199,7 @@ For i = 3 To Range("A2").End(xlDown).Row
 
 Next i
 
+Columns("E:K").EntireColumn.AutoFit
 
 End Sub
 
